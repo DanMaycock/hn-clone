@@ -5,22 +5,24 @@
 </template>
 
 <script lang="ts">
-import axios from "axios";
-import { Component, Vue } from "vue-property-decorator";
-import Item from "@/components/Item.vue";
-import { State, Action } from "vuex-class";
-import { StoriesState, Story } from "@/store/story/types";
-const namespace: string = "story";
+import axios from 'axios';
+import { Component, Vue } from 'vue-property-decorator';
+import Item from '@/components/Item.vue';
+import { State, Action } from 'vuex-class';
+import { StoriesState, Story } from '@/store/stories/types';
+const namespace: string = 'stories';
 
 @Component({
-  components: { Item }
+  components: { Item },
 })
 export default class Home extends Vue {
-  @State("new_stories", { namespace }) stories!: StoriesState[];
-  @Action("fetch_new_stories", { namespace }) fetchStories: any;
+  @State('new_stories', { namespace }) private stories!: StoriesState[];
+  @Action('fetch_new_stories', { namespace }) private fetchStories: any;
 
-  created() {
-    this.fetchStories();
+  private mounted() {
+    if (this.stories.length === 0) {
+      this.fetchStories();
+    }
   }
 }
 </script>

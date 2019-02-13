@@ -44,4 +44,25 @@ export const actions: ActionTree<StoriesState, RootState> = {
         commit('setError', err);
       });
   },
+  async fetch_current_story_with_comments({ commit }, id) {
+    commit('clearComments');
+    axios
+      .get(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
+      .then(res => {
+        commit('setCurrentStory', res.data);
+        res.data.kids.forEach((commentId: number) => {
+          axios
+            .get(`https://hacker-news.firebaseio.com/v0/item/${commentId}.json`)
+            .then(result => {
+              commit('appendNewComment', result.data);
+            })
+            .catch(err => {
+              commit('setError', 'Error fetching comments');
+            });
+        });
+      })
+      .catch(err => {
+        commit('setError', err);
+      });
+  },
 };

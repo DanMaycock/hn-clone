@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div v-if="story" class="container">
     <h2>{{ story.title }}</h2>
     <p>Score: {{story.score }}</p>
     <p>{{ story.url }}</p>
@@ -18,40 +18,23 @@
 </template>
   
 <script lang="ts">
-import axios from "axios";
-import { Component, Vue } from "vue-property-decorator";
+import axios from 'axios';
+import { Component, Vue } from 'vue-property-decorator';
+import { State, Action } from 'vuex-class';
+import { StoriesState, Story, Comment } from '@/store/stories/types';
+const namespace = 'stories';
 
 @Component
 export default class Single extends Vue {
-  story: any = {};
-  comments: any[] = [];
+  @State('current_story', { namespace }) private story!: Story;
+  @State('current_story_comments', { namespace }) private comments!: Comment[];
+  @Action('fetch_current_story_with_comments', { namespace })
+  private getStory: any;
 
-  created() {
-    axios
-      .get(
-        `https://hacker-news.firebaseio.com/v0/item/${
-          this.$route.params.id
-        }.json`
-      )
-      .then(res => {
-        this.story = res.data;
-        this.story.comments = [];
-        this.story.kids.forEach((id: number) => {
-          axios
-            .get(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-            .then(res => {
-              this.$nextTick(() => {
-                this.comments.push(res.data);
-              });
-            })
-            .catch(err => {
-              console.log(err);
-            });
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      });
+  private created() {
+    if (this.story === undefined || this.story.id !== +this.$route.params.id) {
+      this.getStory(this.$route.params.id);
+    }
   }
 }
 </script>

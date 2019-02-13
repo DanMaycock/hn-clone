@@ -8,6 +8,15 @@ export const mutations: MutationTree<StoriesState> = {
   appendNewStory: (state, story) => {
     state.new_stories.push(story);
   },
+  setCurrentStory: (state, story) => {
+    state.current_story = story;
+  },
+  clearComments: state => {
+    state.current_story_comments = [];
+  },
+  appendNewComment: (state, comment) => {
+    state.current_story_comments.push(comment);
+  },
   setError: (state, error) => {
     state.error = error;
   },

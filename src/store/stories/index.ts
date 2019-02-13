@@ -8,11 +8,13 @@ export const state: StoriesState = {
   error: undefined,
   top_stories: [],
   new_stories: [],
+  current_story: undefined,
+  current_story_comments: [],
 };
 
 const namespaced: boolean = true;
 
-export const story: Module<StoriesState, RootState> = {
+export const stories: Module<StoriesState, RootState> = {
   namespaced,
   state,
   actions,

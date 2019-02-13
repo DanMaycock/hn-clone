@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
 import { RootState } from './types';
-import { story } from './story/index';
+import { stories } from './stories/index';
 
 Vue.use(Vuex);
 
@@ -10,7 +10,7 @@ const store: StoreOptions<RootState> = {
     version: '1.0.0',
   },
   modules: {
-    story,
+    stories,
   },
 };
 

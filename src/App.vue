@@ -6,11 +6,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import NavBar from "@/components/NavBar.vue";
+import { Component, Vue } from 'vue-property-decorator';
+import NavBar from '@/components/NavBar.vue';
 
 @Component({
-  components: { NavBar }
+  components: { NavBar },
 })
 export default class App extends Vue {}
 </script>
@@ -18,7 +18,7 @@ export default class App extends Vue {}
 <style lang="scss">
 body {
   background-color: #f0f2fa;
-  font-family: "PT Sans", "Helvetica Neue", "Helvetica", "Roboto", "Arial",
+  font-family: 'PT Sans', 'Helvetica Neue', 'Helvetica', 'Roboto', 'Arial',
     sans-serif;
   color: #555f77;
   -webkit-font-smoothing: antialiased;
