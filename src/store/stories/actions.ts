@@ -1,68 +1,77 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
-import { StoriesState } from './types';
+import { StoriesState, Story, Comment } from './types';
 import { RootState } from '../types';
 
+async function fetchItem(id: number): Promise<Story | Comment> {
+  try {
+    const response = await axios.get(
+      `https://hacker-news.firebaseio.com/v0/item/${id}.json`,
+    );
+    return response.data;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+}
+
+async function fetchTopStoryIds(): Promise<number[]> {
+  try {
+    const response = await axios.get(
+      'https://hacker-news.firebaseio.com/v0/topstories.json',
+    );
+    return response.data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function fetchNewStoryIds(): Promise<number[]> {
+  try {
+    const response = await axios.get(
+      'https://hacker-news.firebaseio.com/v0/newstories.json',
+    );
+    return response.data;
+  } catch (err) {
+    return err;
+  }
+}
+
 export const actions: ActionTree<StoriesState, RootState> = {
-  fetch_top_stories({ commit }): any {
-    axios
-      .get('https://hacker-news.firebaseio.com/v0/topstories.json')
-      .then(resp => {
-        const results = resp.data.slice(0, 10);
-        results.forEach((id: number) => {
-          axios
-            .get(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-            .then(result => {
-              commit('appendTopStory', result.data);
-            })
-            .catch(err => {
-              commit('setError', err);
-            });
-        });
-      })
-      .catch(err => {
-        commit('setError', err);
+  async fetchTopStories({ commit }) {
+    try {
+      const storyIds = await fetchTopStoryIds();
+      storyIds.forEach(async (id: number) => {
+        const story = await fetchItem(id);
+        commit('appendTopStory', story);
       });
+    } catch (err) {
+      commit('setError', err);
+    }
   },
-  fetch_new_stories({ commit }): any {
-    axios
-      .get('https://hacker-news.firebaseio.com/v0/newstories.json')
-      .then(resp => {
-        const results = resp.data.slice(0, 10);
-        results.forEach((id: number) => {
-          axios
-            .get(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-            .then(result => {
-              commit('appendNewStory', result.data);
-            })
-            .catch(err => {
-              commit('setError', err);
-            });
-        });
-      })
-      .catch(err => {
-        commit('setError', err);
+  async fetchNewStories({ commit }) {
+    try {
+      const storyIds = await fetchNewStoryIds();
+      storyIds.forEach(async (id: number) => {
+        const story = await fetchItem(id);
+        commit('appendNewStory', story);
       });
+    } catch (err) {
+      commit('setError', err);
+    }
   },
-  async fetch_current_story_with_comments({ commit }, id) {
-    commit('clearComments');
-    axios
-      .get(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-      .then(res => {
-        commit('setCurrentStory', res.data);
-        res.data.kids.forEach((commentId: number) => {
-          axios
-            .get(`https://hacker-news.firebaseio.com/v0/item/${commentId}.json`)
-            .then(result => {
-              commit('appendNewComment', result.data);
-            })
-            .catch(err => {
-              commit('setError', 'Error fetching comments');
-            });
-        });
-      })
-      .catch(err => {
-        commit('setError', err);
+  async fetchCurrentStoryWithComments({ commit }, id) {
+    try {
+      commit('clearCurrentStory');
+      commit('clearComments');
+      const item = await fetchItem(id);
+      commit('setCurrentStory', item);
+      item.kids.forEach(async (commentId: number) => {
+        const comment = await fetchItem(commentId);
+        commit('appendNewComment', comment);
       });
+    } catch (err) {
+      commit('setError', err);
+    }
   },
 };

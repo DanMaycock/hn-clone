@@ -3,19 +3,22 @@ import { StoriesState } from './types';
 
 export const mutations: MutationTree<StoriesState> = {
   appendTopStory: (state, story) => {
-    state.top_stories.push(story);
+    state.topStories.push(story);
   },
   appendNewStory: (state, story) => {
-    state.new_stories.push(story);
+    state.newStories.push(story);
   },
   setCurrentStory: (state, story) => {
-    state.current_story = story;
+    state.currentStory = story;
+  },
+  clearCurrentStory: state => {
+    state.currentStory = undefined;
   },
   clearComments: state => {
-    state.current_story_comments = [];
+    state.currentStoryComments = [];
   },
   appendNewComment: (state, comment) => {
-    state.current_story_comments.push(comment);
+    state.currentStoryComments.push(comment);
   },
   setError: (state, error) => {
     state.error = error;

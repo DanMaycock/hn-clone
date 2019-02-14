@@ -1,19 +1,11 @@
 <template>
   <div v-if="story" class="container">
-    <h2>{{ story.title }}</h2>
-    <p>Score: {{story.score }}</p>
-    <p>{{ story.url }}</p>
-    <div v-for="comment in comments" :key="comment.id">
-      <div class="comment-wrap">
-        <div class="comment-block">
-          <p class="comment-text">{{comment.text}}</p>
-          <div class="bottom-comment">
-            <div class="comment-author">{{ comment.author }}</div>
-            <div class="comment-date">{{ comment.date }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <h2 class="title">{{ story.title }}</h2>
+    <p class="score">Score: {{story.score }}</p>
+    <p class="url">
+      <a href="url">{{ story.url }}</a>
+    </p>
+    <CommentItem v-for="comment in comments" :key="comment.id" :comment="comment"/>
   </div>
 </template>
   
@@ -22,87 +14,22 @@ import axios from 'axios';
 import { Component, Vue } from 'vue-property-decorator';
 import { State, Action } from 'vuex-class';
 import { StoriesState, Story, Comment } from '@/store/stories/types';
+import CommentItem from '@/components/CommentItem.vue';
 const namespace = 'stories';
 
-@Component
+@Component({
+  components: { CommentItem },
+})
 export default class Single extends Vue {
-  @State('current_story', { namespace }) private story!: Story;
-  @State('current_story_comments', { namespace }) private comments!: Comment[];
-  @Action('fetch_current_story_with_comments', { namespace })
+  @State('currentStory', { namespace }) private story!: Story;
+  @State('currentStoryComments', { namespace }) private comments!: Comment[];
+  @Action('fetchCurrentStoryWithComments', { namespace })
   private getStory: any;
 
   private created() {
-    if (this.story === undefined || this.story.id !== +this.$route.params.id) {
+    if (!this.story || this.story.id !== +this.$route.params.id) {
       this.getStory(this.$route.params.id);
     }
   }
 }
 </script>
-
-<style scoped>
-.comment-wrap {
-  margin-bottom: 1.25rem;
-  display: table;
-  width: 100%;
-  min-height: 5.3125rem;
-}
-
-.photo {
-  padding-top: 0.625rem;
-  display: table-cell;
-  width: 3.5rem;
-}
-.photo .avatar {
-  height: 2.25rem;
-  width: 2.25rem;
-  border-radius: 50%;
-  background-size: contain;
-}
-
-.comment-block {
-  padding: 1rem;
-  background-color: #fff;
-  display: table-cell;
-  vertical-align: top;
-  border-radius: 0.1875rem;
-  -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
-}
-.comment-block textarea {
-  width: 100%;
-  resize: none;
-}
-
-.comment-text {
-  margin-bottom: 1.25rem;
-}
-
-.bottom-comment {
-  color: #acb4c2;
-  font-size: 0.875rem;
-}
-
-.comment-date {
-  float: left;
-}
-
-.comment-actions {
-  float: right;
-}
-.comment-actions li {
-  display: inline;
-  margin: -2px;
-  cursor: pointer;
-}
-.comment-actions li.complain {
-  padding-right: 0.75rem;
-  border-right: 1px solid #e1e5eb;
-}
-.comment-actions li.reply {
-  padding-left: 0.75rem;
-  padding-right: 0.125rem;
-}
-.comment-actions li:hover {
-  color: #0095ff;
-}
-</style>

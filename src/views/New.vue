@@ -1,23 +1,23 @@
 <template>
   <div class="home">
-    <Item v-for="story in stories" :key="story.id" :story="story"></Item>
+    <StoryItem v-for="story in stories" :key="story.id" :story="story"></StoryItem>
   </div>
 </template>
 
 <script lang="ts">
 import axios from 'axios';
 import { Component, Vue } from 'vue-property-decorator';
-import Item from '@/components/Item.vue';
-import { State, Action } from 'vuex-class';
+import StoryItem from '@/components/StoryItem.vue';
+import { Getter, Action } from 'vuex-class';
 import { StoriesState, Story } from '@/store/stories/types';
 const namespace: string = 'stories';
 
 @Component({
-  components: { Item },
+  components: { StoryItem },
 })
 export default class Home extends Vue {
-  @State('new_stories', { namespace }) private stories!: StoriesState[];
-  @Action('fetch_new_stories', { namespace }) private fetchStories: any;
+  @Getter('newStories', { namespace }) private stories!: StoriesState[];
+  @Action('fetchNewStories', { namespace }) private fetchStories: any;
 
   private mounted() {
     if (this.stories.length === 0) {

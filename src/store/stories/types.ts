@@ -22,8 +22,10 @@ export interface Comment {
 
 export interface StoriesState {
   error?: string;
-  top_stories: Story[];
-  new_stories: Story[];
-  current_story?: Story;
-  current_story_comments: Comment[];
+  topStories: Story[];
+  newStories: Story[];
+  currentStory?: Story;
+  currentStoryComments: Comment[];
+  storiesPerPage: number;
+  page: number;
 }

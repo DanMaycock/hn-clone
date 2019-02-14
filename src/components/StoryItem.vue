@@ -2,8 +2,8 @@
   <div class="story">
     <span class="score">{{story.score}}</span>
     <router-link :to="{path: `/story/${story.id}`}">
-      {{ story.title }}
-      <span>{{story.url}}</span>
+      <span class="title">{{ story.title }}</span>
+      <span class="url">{{story.url}}</span>
     </router-link>
     <br>
     <span class="meta">by {{ story.by }}</span>
@@ -12,10 +12,11 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Story } from '@/store/stories/types';
 
 @Component
-export default class Item extends Vue {
-  @Prop(Object) public story!: object;
+export default class StoryItem extends Vue {
+  @Prop(Object) public story!: Story;
 }
 </script>
 
